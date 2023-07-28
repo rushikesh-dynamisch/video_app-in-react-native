@@ -114,6 +114,28 @@ const StopCamera =()=>
   setLiveVideo(true);
 }
 
+const requestOptions = {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: result })
+};
+
+const DetectDisease = async () => {
+  try {
+    await fetch(
+      'https://c590-2401-4900-52fb-cdd6-14a3-b712-673d-f10b.ngrok-free.app/human_disease_detection', requestOptions)
+      .then(response => {
+        response.json()
+          .then(data => {
+            setDisease(data);
+          });
+      })
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
 return (
   <View style={{flex:1}}>
     <Text style={{fontSize:20,marginLeft:100}}>Disease Detector</Text>
@@ -142,6 +164,7 @@ return (
     isLooping
     onPlaybackStatusUpdate={status =>setStatus(()=>status)}
     />
+   
       <TextInput
             value={result}
             multiline={true}
@@ -152,6 +175,13 @@ return (
             }}
             onChangeText={text => setResult(text)}
           />
+
+            <TouchableOpacity onPress={DetectDisease} style={styles.Disease}>
+              <Text>Disease</Text>
+            </TouchableOpacity>
+            <View style={styles.diseasetxt}>
+            {disease ? <Text style={styles.disease}>You may suffer from {disease.data.NaiveBayes}</Text> : <Text style={styles.disease}>You may suffer from...</Text>}
+            </View>
     <View style={styles.buttons}>
              <TouchableOpacity
               onPress={liveStream}
@@ -167,6 +197,9 @@ return (
 
             <TouchableOpacity onPress={startRecording} style={styles.btnSection}>
               <Text>Speak</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={clear} style={styles.btnSection}>
+              <Text>Clear</Text>
             </TouchableOpacity>
             </View>
     </View>
@@ -202,8 +235,8 @@ const styles = StyleSheet.create({
       
     },
     btnSection: {
-      width: 80,
-      height: 50,
+      width: 50,
+      height: 30,
       backgroundColor: '#9FE2BF',
       alignItems: 'center',
       justifyContent: 'center',
@@ -219,4 +252,27 @@ const styles = StyleSheet.create({
       padding: 8,
       borderRadius: 8,
     },
+    Disease: {
+      width: 80,
+      height: 40,
+      backgroundColor:'#9FE2BF',
+      borderRadius: 3,
+      marginBottom: 100,
+       marginLeft:130,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    disease:{
+      display:'flex',
+      justifyContent:'center',
+      alignItems:'center',
+      color:'black',
+      fontSize:20,
+      margin:25    
+    },
+    diseasetxt:{
+      display:'flex',
+      justifyContent:'center',
+      alignItems:'center'
+    }
 });
